@@ -6,16 +6,17 @@ import React from 'react';
 export default function AnimatedCard({ children, index }: { children: React.ReactNode; index: number }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{
-                duration: 0.7,
-                delay: index * 0.15,
-                ease: [0.21, 0.47, 0.32, 0.98]
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+                delay: index * 0.1
             }}
-            whileHover={{ y: -8, scale: 1.02 }}
-            style={{ height: '100%' }}
+            whileHover={{ y: -12, scale: 1.03 }}
+            style={{ height: '100%', cursor: 'pointer' }}
         >
             {children}
         </motion.div>

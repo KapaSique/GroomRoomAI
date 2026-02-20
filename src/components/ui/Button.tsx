@@ -16,8 +16,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 ref={ref}
                 className={`${styles.button} ${testBtnClass || ''} ${className || ''}`}
                 disabled={isLoading || disabled}
-                whileHover={{ scale: disabled || isLoading ? 1 : 1.02 }}
-                whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
+                whileHover={{ scale: disabled || isLoading ? 1 : 1.05 }}
+                whileTap={{ scale: disabled || isLoading ? 1 : 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 {...props}
             >
                 {isLoading ? <span className={styles.loader} /> : children}

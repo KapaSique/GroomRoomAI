@@ -1,21 +1,23 @@
 .button {
     width: 100%;
-    padding: 0.875rem 1.5rem;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.75rem;
+    border-radius: 999px;
+    /* Pill shape */
+    border: none;
     background: var(--accent-gradient);
     color: white;
     font-family: inherit;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     cursor: pointer;
     outline: none;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.39);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Bouncy spring */
+    box-shadow: 0 8px 25px -5px rgba(244, 114, 182, 0.5);
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -28,9 +30,9 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: linear-gradient(135deg, #d946ef 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #fbcfe8 0%, #f472b6 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
     z-index: -1;
 }
 
@@ -39,13 +41,12 @@
 }
 
 .button:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -5px rgba(244, 114, 182, 0.6);
 }
 
 .button:disabled {
-    background: var(--bg-tertiary);
-    color: var(--text-muted);
+    background: #e2e8f0;
+    color: #94a3b8;
     box-shadow: none;
     cursor: not-allowed;
     border-color: transparent;
@@ -54,10 +55,10 @@
 .loader {
     width: 1.25rem;
     height: 1.25rem;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.4);
     border-top-color: white;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes spin {
