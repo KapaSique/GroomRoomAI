@@ -31,7 +31,7 @@ export default function Header({ user }: { user: User | null }) {
                     {user ? (
                         <>
                             <Link href={user.role === 'ADMIN' ? '/admin' : '/dashboard'} className={styles.link}>
-                                ЛК ({user.login})
+                                {user.login}
                             </Link>
                             <button
                                 onClick={handleLogout}

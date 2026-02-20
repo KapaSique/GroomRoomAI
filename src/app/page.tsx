@@ -19,10 +19,31 @@ export default async function Home() {
   });
 
   const demoPhotos = [
-    { petName: 'Снежок', photo: '/demo/dog1.png' },
-    { petName: 'Ричи', photo: '/demo/dog2.png' },
-    { petName: 'Ляля', photo: '/demo/dog3.png' }
+    { petName: 'Снежок', photo: '/demo/corgi.png' },
+    { petName: 'Ричи', photo: '/demo/husky.png' },
+    { petName: 'Ляля', photo: '/demo/poodle.png' }
   ];
+
+  const realRequestsWithReviews = await prisma.request.findMany({
+    where: {
+      status: 'Услуга оказана',
+      reviewText: { not: null },
+    },
+    include: { user: true },
+    orderBy: { createdAt: 'desc' }
+  });
+
+  const realReviews = realRequestsWithReviews.map((req) => {
+    const nameParts = req.user.fullname.trim().split(/\s+/);
+    const formattedAuthor = nameParts.length > 1 ? `${nameParts[0]} ${nameParts[1][0]}.` : nameParts[0];
+
+    return {
+      petName: req.petName,
+      author: formattedAuthor,
+      photo: req.afterPhoto || req.beforePhoto || '/demo/default-dog.png',
+      text: req.reviewText as string,
+    };
+  });
 
   return (
     <div className="container" style={{ padding: '2rem 1rem', position: 'relative' }}>
@@ -57,7 +78,7 @@ export default async function Home() {
 
       <section className={styles.requestsSection}>
         <h2 className={styles.sectionTitle}>Отзывы наших счастливых клиентов</h2>
-        <ReviewCarousel />
+        <ReviewCarousel realReviews={realReviews} />
       </section>
     </div>
   );

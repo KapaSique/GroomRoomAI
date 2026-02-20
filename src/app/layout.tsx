@@ -23,6 +23,16 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Header user={user as any} />
         <main>{children}</main>
+        <footer style={{
+          textAlign: 'center',
+          padding: '2rem',
+          color: 'var(--text-muted)',
+          fontSize: '0.9rem',
+          borderTop: '1px solid rgba(0,0,0,0.05)',
+          marginTop: 'auto'
+        }}>
+          &copy; 2026 Сделано с любовью для пушистых друзей ❤️
+        </footer>
       </body>
     </html>
   );
