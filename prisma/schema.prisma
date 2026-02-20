@@ -23,6 +23,7 @@ model Request {
   status      String   @default("Новая") // Новая, Обработка данных, Услуга оказана
   beforePhoto String
   afterPhoto  String?
+  reviewText  String?
   createdAt   DateTime @default(now())
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
