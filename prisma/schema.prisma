@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  fullname String
+  login    String    @unique
+  email    String
+  password String
+  role     String    @default("USER") // USER | ADMIN
+  requests Request[]
+}
+
+model Request {
+  id          Int      @id @default(autoincrement())
+  petName     String
+  status      String   @default("Новая") // Новая, Обработка данных, Услуга оказана
+  beforePhoto String
+  afterPhoto  String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+}

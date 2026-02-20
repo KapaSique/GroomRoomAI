@@ -1,0 +1,57 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.checkboxWrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.checkboxWrapper:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.checkboxWrapper input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.checkboxError {
+    font-size: 0.875rem;
+    color: var(--error);
+    display: block;
+    margin-top: 0.375rem;
+    font-weight: 500;
+}
+
+.label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    cursor: pointer;
+}

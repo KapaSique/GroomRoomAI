@@ -1,0 +1,201 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
+import styles from '../../app/dashboard/page.module.css';
+
+interface RequestModel {
+    id: number;
+    petName: string;
+    status: string;
+}
+
+export default function DashboardClient({ initialRequests }: { initialRequests: RequestModel[] }) {
+    const router = useRouter();
+    const [petName, setPetName] = useState('');
+    const [photo, setPhoto] = useState<File | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleAddRequest = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!petName || !photo) {
+            setError('Заполните все поля');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setError('');
+
+        const formData = new FormData();
+        formData.append('petName', petName);
+        formData.append('photo', photo);
+
+        try {
+            const res = await fetch('/api/requests', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                setError(data.error || 'Ошибка создания заявки');
+            } else {
+                setPetName('');
+                setPhoto(null);
+                const fileInput = document.getElementById('photoInput') as HTMLInputElement;
+                if (fileInput) fileInput.value = '';
+                router.refresh();
+            }
+        } catch (err) {
+            setError('Ошибка сети');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        try {
+            if (confirm('Удалить заявку?')) {
+                await fetch(`/api/requests/${id}`, { method: 'DELETE' });
+                router.refresh();
+            }
+        } catch (err) {
+            alert('Ошибка удаления');
+        }
+    };
+
+    const getStatusClass = (status: string) => {
+        if (status === 'Новая') return styles.statusНовая;
+        if (status === 'Обработка данных') return styles.statusОбработка;
+        if (status === 'Услуга оказана') return styles.statusОказана;
+        return '';
+    };
+
+    return (
+        <div className={styles.content}>
+            <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+                <div className={`glass ${styles.formCard}`}>
+                    <h2 style={{ marginBottom: '1.5rem', position: 'relative', zIndex: 1 }}>Новая заявка</h2>
+                    <form onSubmit={handleAddRequest} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', position: 'relative', zIndex: 1 }}>
+                        <Input
+                            label="Кличка питомца"
+                            value={petName}
+                            onChange={(e) => setPetName(e.target.value)}
+                            testInputClass="test-i-name"
+                        />
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
+                            <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-secondary)', marginLeft: '0.25rem' }}>Фото питомца</label>
+                            <div style={{
+                                position: 'relative',
+                                background: 'rgba(255,255,255,0.03)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '12px',
+                                padding: '1rem',
+                                transition: 'all 0.3s ease',
+                                display: 'flex',
+                                alignItems: 'center'
+                            }} className="file-input-wrapper">
+                                <input
+                                    id="photoInput"
+                                    type="file"
+                                    accept=".jpg,.jpeg,.bmp"
+                                    onChange={(e) => setPhoto(e.target.files?.[0] || null)}
+                                    className="test-c-photo"
+                                    style={{ color: 'var(--text-primary)', width: '100%', outline: 'none' }}
+                                />
+                            </div>
+                        </div>
+
+                        <AnimatePresence>
+                            {error && (
+                                <motion.span
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    style={{ color: 'var(--error)', fontSize: '0.875rem', marginBottom: '1rem', fontWeight: 500 }}
+                                >
+                                    {error}
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+
+                        <Button type="submit" testBtnClass="test-b-new" isLoading={isSubmitting}>
+                            Создать
+                        </Button>
+                    </form>
+                </div>
+            </motion.div>
+
+            <div className={styles.requestsList}>
+                <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ marginBottom: '1.5rem', fontSize: '1.75rem' }}
+                >
+                    Мои заявки
+                </motion.h2>
+
+                <AnimatePresence mode="popLayout">
+                    {initialRequests.length === 0 && (
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}
+                        >
+                            У вас пока нет заявок.
+                        </motion.p>
+                    )}
+                    {initialRequests.map((req, i) => (
+                        <motion.div
+                            layout
+                            key={req.id}
+                            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+                            transition={{ duration: 0.4, delay: i * 0.05 }}
+                            className={`glass ${styles.requestItem}`}
+                        >
+                            <div className={styles.requestInfo}>
+                                <h3 className={`test-t-name`} style={{ fontSize: '1.35rem', fontWeight: 600 }}>{req.petName}</h3>
+                                <span className={`test-t-status ${styles.status} ${getStatusClass(req.status)}`}>
+                                    {req.status}
+                                </span>
+                            </div>
+                            {req.status === 'Новая' && (
+                                <Button
+                                    testBtnClass="test-b-remove"
+                                    onClick={() => handleDelete(req.id)}
+                                    style={{
+                                        background: 'rgba(239, 68, 68, 0.05)',
+                                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                                        color: 'var(--error)',
+                                        width: 'auto',
+                                        boxShadow: 'none'
+                                    }}
+                                    whileHover={{
+                                        backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                        borderColor: 'rgba(239, 68, 68, 0.6)',
+                                        scale: 1.05
+                                    }}
+                                >
+                                    Удалить
+                                </Button>
+                            )}
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+}
