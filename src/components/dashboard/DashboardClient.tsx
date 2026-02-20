@@ -12,6 +12,7 @@ interface RequestModel {
     petName: string;
     status: string;
     beforePhoto: string;
+    reviewText: string | null;
 }
 
 export default function DashboardClient({ initialRequests }: { initialRequests: RequestModel[] }) {
@@ -20,6 +21,33 @@ export default function DashboardClient({ initialRequests }: { initialRequests: 
     const [photo, setPhoto] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [reviewLoadings, setReviewLoadings] = useState<Record<number, boolean>>({});
+
+    const handleAddReview = async (e: React.FormEvent, id: number) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const reviewText = (form.elements.namedItem('reviewText') as HTMLInputElement).value;
+        if (!reviewText.trim()) return;
+
+        setReviewLoadings(prev => ({ ...prev, [id]: true }));
+        try {
+            const formData = new FormData();
+            formData.append('reviewText', reviewText);
+            const res = await fetch(`/api/requests/${id}`, {
+                method: 'PATCH',
+                body: formData,
+            });
+            if (res.ok) {
+                router.refresh();
+            } else {
+                alert('Ошибка: ' + (await res.json()).error);
+            }
+        } catch (err) {
+            alert('Ошибка сети');
+        } finally {
+            setReviewLoadings(prev => ({ ...prev, [id]: false }));
+        }
+    };
 
     const handleAddRequest = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -201,6 +229,43 @@ export default function DashboardClient({ initialRequests }: { initialRequests: 
                                 >
                                     Удалить
                                 </Button>
+                            )}
+
+                            {req.status === 'Услуга оказана' && (
+                                <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                                    {req.reviewText ? (
+                                        <div style={{ background: 'rgba(255,255,255,0.5)', padding: '1rem', borderRadius: '12px' }}>
+                                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Ваш отзыв:</p>
+                                            <p style={{ fontStyle: 'italic', color: 'var(--text-primary)' }}>«{req.reviewText}»</p>
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={(e) => handleAddReview(e, req.id)} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                            <label style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
+                                                Оставить отзыв о работе:
+                                            </label>
+                                            <textarea
+                                                name="reviewText"
+                                                placeholder="Всё прошло отлично, питомец счастлив!"
+                                                rows={2}
+                                                required
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem 1rem',
+                                                    borderRadius: '12px',
+                                                    border: '1px solid var(--border)',
+                                                    background: 'rgba(255,255,255,0.7)',
+                                                    outline: 'none',
+                                                    fontFamily: 'inherit',
+                                                    fontSize: '0.95rem',
+                                                    resize: 'vertical'
+                                                }}
+                                            />
+                                            <Button type="submit" isLoading={reviewLoadings[req.id]} style={{ alignSelf: 'flex-start', padding: '0.5rem 1.5rem', fontSize: '0.9rem' }}>
+                                                Отправить отзыв
+                                            </Button>
+                                        </form>
+                                    )}
+                                </div>
                             )}
                         </motion.div>
                     ))}

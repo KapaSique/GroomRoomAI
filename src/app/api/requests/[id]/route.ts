@@ -27,18 +27,34 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
     const user = await getUserFromCookies();
-    if (!user || user.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     try {
         const { id } = await params;
         const requestId = Number(id);
         const formData = await req.formData();
         const status = formData.get('status') as string;
+        const reviewText = formData.get('reviewText') as string;
 
-        if (!status) return NextResponse.json({ error: 'Status is required' }, { status: 400 });
+        if (!status && !reviewText) return NextResponse.json({ error: 'No data provided' }, { status: 400 });
 
         const existingReq = await prisma.request.findUnique({ where: { id: requestId } });
         if (!existingReq) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+        // Handle client adding a review
+        if (reviewText) {
+            if (existingReq.userId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            if (existingReq.status !== 'Услуга оказана') return NextResponse.json({ error: 'Only completed requests can be reviewed' }, { status: 400 });
+
+            const updated = await prisma.request.update({
+                where: { id: requestId },
+                data: { reviewText },
+            });
+            return NextResponse.json(updated);
+        }
+
+        // Handle Admin changing status
+        if (user.role !== 'ADMIN') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         if (existingReq.status === 'Услуга оказана') return NextResponse.json({ error: 'Смена статуса "Услуга оказана" невозможна' }, { status: 400 });
 
         let updateData: any = { status };

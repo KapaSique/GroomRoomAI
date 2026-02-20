@@ -5,14 +5,14 @@ import Image from 'next/image';
 import React from 'react';
 import styles from '../../app/review-carousel.module.css';
 
-interface Review {
+export interface Review {
     petName: string;
     photo: string;
     author: string;
     text: string;
 }
 
-const reviews: Review[] = [
+const demoReviews: Review[] = [
     {
         petName: 'Снежок',
         photo: '/demo/corgi.png',
@@ -39,10 +39,16 @@ const reviews: Review[] = [
     }
 ];
 
-// Duplicate the array to create a seamless infinite loop
-const infiniteReviews = [...reviews, ...reviews, ...reviews];
+export default function ReviewCarousel({ realReviews = [] }: { realReviews?: Review[] }) {
+    // Combine real and demo reviews (put real ones first if they exist)
+    const combinedReviews = [...realReviews, ...demoReviews];
 
-export default function ReviewCarousel() {
+    // Duplicate the array to create a seamless infinite loop (we need at least 3 sets to look smooth)
+    const infiniteReviews = [...combinedReviews, ...combinedReviews, ...combinedReviews];
+
+    // Calculate animation duration based on total number of unique cards (approx 10s per card)
+    const duration = combinedReviews.length * 10;
+
     return (
         <div className={styles.carouselContainer}>
             <div className={styles.scrollMask}>
@@ -51,7 +57,7 @@ export default function ReviewCarousel() {
                     animate={{ x: ["0%", "-33.333%"] }} // scroll exactly one set of the 3 arrays
                     transition={{
                         ease: "linear",
-                        duration: 35, // slow, gentle reading speed
+                        duration: duration,
                         repeat: Infinity,
                     }}
                 >
