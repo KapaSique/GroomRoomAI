@@ -11,6 +11,7 @@ interface RequestModel {
     id: number;
     petName: string;
     status: string;
+    beforePhoto: string;
 }
 
 export default function DashboardClient({ initialRequests }: { initialRequests: RequestModel[] }) {
@@ -166,11 +167,20 @@ export default function DashboardClient({ initialRequests }: { initialRequests: 
                             transition={{ duration: 0.4, delay: i * 0.05 }}
                             className={`glass ${styles.requestItem}`}
                         >
-                            <div className={styles.requestInfo}>
-                                <h3 className={`test-t-name`} style={{ fontSize: '1.35rem', fontWeight: 600 }}>{req.petName}</h3>
-                                <span className={`test-t-status ${styles.status} ${getStatusClass(req.status)}`}>
-                                    {req.status}
-                                </span>
+                            <div className={styles.requestInfo} style={{ flexDirection: 'row', alignItems: 'center', gap: '1.25rem' }}>
+                                {/* Small Thumbnail Widget */}
+                                <div style={{
+                                    width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden',
+                                    border: '2px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', flexShrink: 0
+                                }}>
+                                    <img src={req.beforePhoto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                    <h3 className={`test-t-name`} style={{ fontSize: '1.35rem', fontWeight: 600 }}>{req.petName}</h3>
+                                    <span className={`test-t-status ${styles.status} ${getStatusClass(req.status)}`}>
+                                        {req.status}
+                                    </span>
+                                </div>
                             </div>
                             {req.status === 'Новая' && (
                                 <Button

@@ -2,7 +2,7 @@ import { getUserFromCookies } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import LoginForm from '@/components/forms/LoginForm';
 import RegisterForm from '@/components/forms/RegisterForm';
-import AnimatedCard from '@/components/home/AnimatedCard';
+import ReviewCarousel from '@/components/home/ReviewCarousel';
 import Image from 'next/image';
 import styles from './page.module.css';
 
@@ -56,52 +56,8 @@ export default async function Home() {
       )}
 
       <section className={styles.requestsSection}>
-        <h2 className={styles.sectionTitle}>Наши счастливые клиенты</h2>
-
-        <div className={styles.grid}>
-          {/* Show Demo Photos First for Maximum Visual Appeal */}
-          {demoPhotos.map((demo, i) => (
-            <AnimatedCard key={`demo-${i}`} index={i}>
-              <div className={`glass ${styles.card}`}>
-                <div className={styles.imageContainer}>
-                  <Image
-                    src={demo.photo}
-                    alt={demo.petName}
-                    fill
-                    className={`test-t-photo ${styles.image}`}
-                    style={{ objectFit: 'cover' }}
-                  />
-                </div>
-                <div className={styles.cardContent}>
-                  <h3 className={`test-t-name ${styles.petName}`}>{demo.petName}</h3>
-                </div>
-              </div>
-            </AnimatedCard>
-          ))}
-
-          {finishedRequests.map((req, i) => (
-            <AnimatedCard key={req.id} index={demoPhotos.length + i}>
-              <div className={`glass ${styles.card}`}>
-                <div className={styles.imageContainer}>
-                  {req.afterPhoto ? (
-                    <Image
-                      src={req.afterPhoto}
-                      alt={req.petName}
-                      fill
-                      className={`test-t-photo ${styles.image}`}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div className="test-t-photo" style={{ width: '100%', height: '100%', backgroundColor: 'var(--bg-tertiary)' }} />
-                  )}
-                </div>
-                <div className={styles.cardContent}>
-                  <h3 className={`test-t-name ${styles.petName}`}>{req.petName}</h3>
-                </div>
-              </div>
-            </AnimatedCard>
-          ))}
-        </div>
+        <h2 className={styles.sectionTitle}>Отзывы наших счастливых клиентов</h2>
+        <ReviewCarousel />
       </section>
     </div>
   );

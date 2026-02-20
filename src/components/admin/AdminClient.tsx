@@ -10,6 +10,7 @@ interface RequestModel {
     id: number;
     petName: string;
     status: string;
+    beforePhoto: string;
 }
 
 export default function AdminClient({ requests }: { requests: RequestModel[] }) {
@@ -74,25 +75,34 @@ export default function AdminClient({ requests }: { requests: RequestModel[] }) 
                             transition={{ type: "spring", stiffness: 260, damping: 20, delay: i * 0.1 }}
                             className={`glass ${styles.requestItem}`}
                         >
-                            <div className={styles.info}>
-                                <h3 className={`test-t-name`} style={{ fontSize: '1.75rem', marginBottom: '1rem', fontWeight: 800 }}>
-                                    {req.petName}
-                                </h3>
-                                <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-                                    Текущий статус:{' '}
-                                    <span style={{
-                                        color: req.status === 'Услуга оказана' ? 'var(--success)' :
-                                            req.status === 'Обработка данных' ? 'var(--warning)' : 'var(--info)',
-                                        fontWeight: 700,
-                                        padding: '0.4rem 0.8rem',
-                                        background: 'rgba(255,255,255,0.7)',
-                                        borderRadius: '999px',
-                                        marginLeft: '0.5rem',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                                    }}>
-                                        {req.status}
-                                    </span>
-                                </p>
+                            <div className={styles.info} style={{ flexDirection: 'row', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+                                {/* Small Thumbnail Widget */}
+                                <div style={{
+                                    width: '80px', height: '80px', borderRadius: '20px', overflow: 'hidden',
+                                    border: '3px solid rgba(255,255,255,0.9)', boxShadow: '0 8px 20px rgba(0,0,0,0.08)', flexShrink: 0
+                                }}>
+                                    <img src={req.beforePhoto} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                </div>
+                                <div>
+                                    <h3 className={`test-t-name`} style={{ fontSize: '1.75rem', marginBottom: '0.75rem', fontWeight: 800 }}>
+                                        {req.petName}
+                                    </h3>
+                                    <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
+                                        Текущий статус:{' '}
+                                        <span style={{
+                                            color: req.status === 'Услуга оказана' ? 'var(--success)' :
+                                                req.status === 'Обработка данных' ? 'var(--warning)' : 'var(--info)',
+                                            fontWeight: 700,
+                                            padding: '0.4rem 0.8rem',
+                                            background: 'rgba(255,255,255,0.7)',
+                                            borderRadius: '999px',
+                                            marginLeft: '0.5rem',
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                                        }}>
+                                            {req.status}
+                                        </span>
+                                    </p>
+                                </div>
                             </div>
 
                             {req.status !== 'Услуга оказана' && (
