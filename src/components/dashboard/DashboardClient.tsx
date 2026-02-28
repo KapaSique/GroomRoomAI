@@ -128,18 +128,51 @@ export default function DashboardClient({ initialRequests }: { initialRequests: 
                                 background: 'rgba(255,255,255,0.03)',
                                 border: '1px solid var(--border)',
                                 borderRadius: '12px',
-                                padding: '1rem',
+                                padding: '0.75rem 1rem',
                                 transition: 'all 0.3s ease',
                                 display: 'flex',
-                                alignItems: 'center'
+                                alignItems: 'center',
+                                gap: '1rem'
                             }} className="file-input-wrapper">
+                                <button
+                                    type="button"
+                                    onClick={() => document.getElementById('photoInput')?.click()}
+                                    style={{
+                                        background: 'rgba(236, 110, 222, 0.1)',
+                                        color: 'var(--accent)',
+                                        border: '1px solid rgba(236, 110, 222, 0.2)',
+                                        padding: '0.5rem 1.25rem',
+                                        borderRadius: '8px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(236, 110, 222, 0.15)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(236, 110, 222, 0.1)'; }}
+                                >
+                                    Выбрать фото
+                                </button>
+
+                                <span style={{
+                                    fontSize: '0.9rem',
+                                    color: photo ? 'var(--text-primary)' : 'var(--text-muted)',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    flex: 1
+                                }}>
+                                    {photo ? photo.name : 'Файл не выбран'}
+                                </span>
+
                                 <input
                                     id="photoInput"
                                     type="file"
                                     accept=".jpg,.jpeg,.bmp"
                                     onChange={(e) => setPhoto(e.target.files?.[0] || null)}
                                     className="test-c-photo"
-                                    style={{ color: 'var(--text-primary)', width: '100%', outline: 'none' }}
+                                    style={{ display: 'none' }}
                                 />
                             </div>
                         </div>

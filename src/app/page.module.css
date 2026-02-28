@@ -208,3 +208,21 @@
     transform: translate(-30px, -50px) scale(0.9) rotate(-5deg);
   }
 }
+
+.ctaButton {
+  background: linear-gradient(135deg, var(--accent) 0%, #d46ccb 100%);
+  color: white !important;
+  padding: 1rem 2.5rem;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(236, 110, 222, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(236, 110, 222, 0.4);
+}

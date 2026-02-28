@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import LoginForm from '@/components/forms/LoginForm';
 import RegisterForm from '@/components/forms/RegisterForm';
 import ReviewCarousel from '@/components/home/ReviewCarousel';
+import Link from 'next/link';
 import Image from 'next/image';
 import styles from './page.module.css';
 
@@ -63,6 +64,17 @@ export default async function Home() {
         <p className={styles.subtitle}>
           Оставьте заявку онлайн, и наши грумеры бережно и профессионально позаботятся о красоте и здоровье вашего любимца.
         </p>
+
+        {user && (
+          <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
+            <Link
+              href="/dashboard"
+              className={styles.ctaButton}
+            >
+              Оставить заявку ✨
+            </Link>
+          </div>
+        )}
       </section>
 
       {!user && (
