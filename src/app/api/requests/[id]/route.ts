@@ -17,6 +17,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
         if (!existingReq) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         if (existingReq.userId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         if (existingReq.status !== 'Новая') return NextResponse.json({ error: 'Удалять можно только новые заявки' }, { status: 400 });
+        if (existingReq.petName !== '') return NextResponse.json({error: 'Назовите имя своего питомца'}, {status: 400});
 
         await prisma.request.delete({ where: { id: requestId } });
         return NextResponse.json({ success: true });
@@ -44,7 +45,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         // Handle client adding a review
         if (reviewText) {
             if (existingReq.userId !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-            if (existingReq.status !== 'Услуга оказана') return NextResponse.json({ error: 'Only completed requests can be reviewed' }, { status: 400 });
+            if (existingReq.status !== 'Услуга оказана') return NextResponse.json({ error: 'Только выполненные заявки могут быть просмотрены' }, { status: 400 });
 
             const updated = await prisma.request.update({
                 where: { id: requestId },
@@ -63,7 +64,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         if (status === 'Услуга оказана') {
             const photo = formData.get('photo') as File;
             if (!photo) return NextResponse.json({ error: 'Требуется фото для завершения' }, { status: 400 });
-            if (!['image/jpeg', 'image/bmp'].includes(photo.type)) {
+            if (!['image/jpeg', 'image/bmp','image/jpg', 'image/png'].includes(photo.type)) {
                 return NextResponse.json({ error: 'Разрешены только jpeg и bmp' }, { status: 400 });
             }
             if (photo.size > 2 * 1024 * 1024) {
